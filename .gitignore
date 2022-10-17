@@ -1,0 +1,13 @@
+*.code-workspace
+*.csv
+*.jl.*.cov
+*.jl.cov
+*.jl.mem
+*.jld2
+*.mat
+*.parquet
+/Manifest.toml
+/docs/build/
+data/**
+docs/build/
+docs/site/

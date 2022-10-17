@@ -1,0 +1,7 @@
+name = "AperiodicSurrogates"
+uuid = "b45ef32a-9cdb-40be-815b-79ae4e94a75e"
+authors = ["brendanjohnharris <brendanjohnharris@gmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1.6"
