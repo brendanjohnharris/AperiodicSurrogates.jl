@@ -1,2 +1,6 @@
 [deps]
+AperiodicSurrogates = "b45ef32a-9cdb-40be-815b-79ae4e94a75e"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+TimeseriesSurrogates = "c804724b-8c18-5caa-8579-6025a0767c70"

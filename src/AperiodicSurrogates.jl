@@ -3,6 +3,7 @@ using Reexport
 using TimeseriesSurrogates
 using TimeseriesSurrogates.StatsBase
 using TimeseriesSurrogates.AbstractFFTs
+using TimeseriesSurrogates.Distributions
 using IntervalSets
 using PyFOOOF
 using PyFOOOF.PyCall
@@ -58,8 +59,7 @@ function TimeseriesSurrogates.surrogenerator(x::AbstractVector, ap::Aperiodic, r
     fm = aperiodicfit(f, r.^2, freqrange=ap.freqrange)
     r = f .|> fm .|> sqrt
 
-    init = (inverse = inverse, m = m, coeffs = coeffs, n = n, r = r,
-            ϕ = ϕ, shuffled𝓕 = shuffled𝓕)
+    init = (; inverse, m, coeffs, n, r, shuffled𝓕)
     return TimeseriesSurrogates.SurrogateGenerator(ap, x, s, init, rng)
 end
 
