@@ -52,12 +52,15 @@ function TimeseriesSurrogates.surrogenerator(x::AbstractVector, ap::Aperiodic, r
     shuffled𝓕 = zero(𝓕)
     s = similar(x)
     n = length(𝓕)
-    r = abs.(𝓕)
-    coeffs = zero(r)
+    _r = abs.(𝓕)
+    coeffs = zero(_r)
 
     # * Then, fit the aperiodic model to the power spectrum and calculate its Fourier coefficients
-    fm = aperiodicfit(f, r.^2, freqrange=ap.freqrange)
+    fm = aperiodicfit(f, _r.^2, freqrange=ap.freqrange)
     r = f .|> fm .|> sqrt
+
+    # * Scale the coefficients so the surrogate has the same energy as the original time series
+    r = r.*sum(_r)./sum(r)
 
     init = (; inverse, m, coeffs, n, r, shuffled𝓕)
     return TimeseriesSurrogates.SurrogateGenerator(ap, x, s, init, rng)
