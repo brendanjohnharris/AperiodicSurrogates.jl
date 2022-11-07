@@ -25,6 +25,7 @@ function aperiodicfit(f, res::AbstractVector; kwargs...)
     fm = fooof(f, res; kwargs...)
     # * The aperiodic model, as described in doi.org/10.1038/s41593-020-00744-x
     b, k, χ = fm.aperiodic_params_
+    k = max(k, 0.0) # A negative knee generally leads to bad values
     L = f -> 10.0.^(b - log10(k + (f)^χ))
 end
 
