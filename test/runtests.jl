@@ -4,7 +4,7 @@ using TimeseriesSurrogates, CairoMakie
 using DelimitedFiles
 
 @testset "AperiodicSurrogates.jl" begin
-    x = readdlm(joinpath(@__DIR, "test.csv")) |> vec
+    x = readdlm(joinpath(@__DIR__, "test.csv")) |> vec
     fs = 1250.0
     s = surrogate(x, AP(fs))
     fig = surroplot(x, s; resolution=(720, 1080), cx=:cornflowerblue, cs=:crimson)
