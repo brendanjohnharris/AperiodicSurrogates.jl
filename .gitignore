@@ -12,3 +12,4 @@ data/**
 docs/build/
 .CondaPkg
 docs/site/
+!test.csv
