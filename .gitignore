@@ -10,4 +10,5 @@
 /docs/build/
 data/**
 docs/build/
+.CondaPkg
 docs/site/

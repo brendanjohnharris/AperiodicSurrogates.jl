@@ -6,20 +6,20 @@ using TimeseriesSurrogates.AbstractFFTs
 using TimeseriesSurrogates.Distributions
 using IntervalSets
 using PyFOOOF
-using PyFOOOF.PyCall
+using PythonCall
 
 @reexport using TimeseriesSurrogates
 export Aperiodic, AP
 
 function fooof(f, res::AbstractVector; freqrange=[1.0, 300.0])
-    freqrange = py"[$(first(freqrange)), $(last(freqrange))]"o
+    freqrange = pylist([(first(freqrange)), (last(freqrange))])
     f = collect(f)
     spectrum = collect(res)
-    fm = PyFOOOF.FOOOF(peak_width_limits=py"[0.5, 20.0]"o, max_n_peaks=4, aperiodic_mode="knee") # Maybe relax these in the future?
-    fm.add_data(f, spectrum, freqrange)
+    fm = PyFOOOF.FOOOF(peak_width_limits=pylist([0.5, 20.0]), max_n_peaks=4, aperiodic_mode="knee") # Maybe relax these in the future?
+    fm.add_data(Py(f).to_numpy(), Py(spectrum).to_numpy(), freqrange)
     fm.fit()
     # if fm.aperiodic_params_[2] < 0.0
-    #     fm = PyFOOOF.FOOOF(peak_width_limits=py"[0.5, 20.0]"o, max_n_peaks=4, aperiodic_mode="fixed")
+    #     fm = PyFOOOF.FOOOF(peak_width_limits=pylist([0.5, 20.0]), max_n_peaks=4, aperiodic_mode="fixed")
     #     fm.add_data(f, spectrum, freqrange)
     #     fm.fit()
     # end
@@ -29,7 +29,7 @@ end
 function aperiodicfit(f, res::AbstractVector; kwargs...)
     fm = fooof(f, res; kwargs...)
     # * The aperiodic model, as described in doi.org/10.1038/s41593-020-00744-x
-    b, k, χ = fm.aperiodic_params_
+    b, k, χ = pyconvert.((Float64,), fm.aperiodic_params_)
     k = max(k, 0.01)
     # b, k, χ = length(ps) ==3 ? ps : (ps[1], 0.0, ps[2])
     L = f -> 10.0.^(b - log10(k + (f)^χ))
