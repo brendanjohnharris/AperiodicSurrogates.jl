@@ -12,7 +12,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TimeseriesSurrogates = "c804724b-8c18-5caa-8579-6025a0767c70"
 
 [compat]
-StatsBase = "0.34"
+StatsBase = "0.24 - 0.34"
 IntervalSets = "0.4 - 0.7"
 PyFOOOF = "0.2"
 PythonCall = "0.9"
