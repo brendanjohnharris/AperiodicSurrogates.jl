@@ -1,7 +1,7 @@
 module AperiodicSurrogates
 using Reexport
 using TimeseriesSurrogates
-using TimeseriesSurrogates.StatsBase
+using StatsBase
 using TimeseriesSurrogates.AbstractFFTs
 using TimeseriesSurrogates.Distributions
 using IntervalSets
@@ -32,7 +32,7 @@ function aperiodicfit(f, res::AbstractVector; kwargs...)
     b, k, χ = pyconvert.((Float64,), fm.aperiodic_params_)
     k = max(k, 0.01)
     # b, k, χ = length(ps) ==3 ? ps : (ps[1], 0.0, ps[2])
-    L = f -> 10.0.^(b - log10(k + (f)^χ))
+    L = f -> 10.0 .^ (b - log10(k + (f)^χ))
 end
 
 """
@@ -46,7 +46,7 @@ struct Aperiodic <: Surrogate
     freqrange
 end
 Aperiodic(fs) = Aperiodic(fs, (1, 300))
-Aperiodic(fs, freqrange::AbstractInterval, args...) = Aperiodic(fs, freqrange|>extrema)
+Aperiodic(fs, freqrange::AbstractInterval, args...) = Aperiodic(fs, freqrange |> extrema)
 const AP = Aperiodic
 
 function TimeseriesSurrogates.surrogenerator(x::AbstractVector, ap::Aperiodic, rng=Random.default_rng())
@@ -54,7 +54,7 @@ function TimeseriesSurrogates.surrogenerator(x::AbstractVector, ap::Aperiodic, r
     m = mean(x)
     forward = plan_rfft(x)
     f = rfftfreq(length(x), ap.fs)
-    𝓕 = forward*(x .- m)
+    𝓕 = forward * (x .- m)
     inverse = plan_irfft(𝓕, length(x))
     shuffled𝓕 = zero(𝓕)
     s = similar(x)
@@ -63,12 +63,12 @@ function TimeseriesSurrogates.surrogenerator(x::AbstractVector, ap::Aperiodic, r
     coeffs = zero(_r)
 
     # * Then, fit the aperiodic model to the power spectrum and calculate its Fourier coefficients
-    fm = aperiodicfit(f, _r.^2, freqrange=ap.freqrange)
+    fm = aperiodicfit(f, _r .^ 2, freqrange=ap.freqrange)
     r = f .|> fm .|> sqrt
-    r[f .< minimum(ap.freqrange)] = _r[f .< minimum(ap.freqrange)] # Ensures no funky behaviour outside of the fit bounds
+    r[f.<minimum(ap.freqrange)] = _r[f.<minimum(ap.freqrange)] # Ensures no funky behaviour outside of the fit bounds
 
     # * Scale the coefficients so the surrogate has the same energy as the original time series
-    r = r.*sum(_r)./sum(r)
+    r = r .* sum(_r) ./ sum(r)
 
     init = (; inverse, m, coeffs, n, r, shuffled𝓕)
     return TimeseriesSurrogates.SurrogateGenerator(ap, x, s, init, rng)
@@ -77,7 +77,7 @@ end
 function (sg::TimeseriesSurrogates.SurrogateGenerator{<:Aperiodic})()
     inverse, m, coeffs, n, r, shuffled𝓕 =
         getfield.(Ref(sg.init),
-        (:inverse, :m, :coeffs, :n, :r, :shuffled𝓕))
+            (:inverse, :m, :coeffs, :n, :r, :shuffled𝓕))
     s, rng = sg.s, sg.rng
 
     coeffs .= rand(rng, Uniform(0, 2π), n)
